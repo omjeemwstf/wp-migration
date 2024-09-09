@@ -1,0 +1,25 @@
+{
+  "name": "lexical",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tryghost/kg-html-to-lexical": "^1.1.17",
+    "@types/cheerio": "^0.22.35",
+    "@types/he": "^1.2.3",
+    "@types/jsonwebtoken": "^9.0.6",
+    "axios": "^1.7.7",
+    "form-data": "^4.0.0",
+    "jsdom": "^25.0.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.7"
+  }
+}
