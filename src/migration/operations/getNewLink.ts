@@ -1,29 +1,7 @@
 import axios from "axios";
 import path from "path"
 import fs from "fs"
-import FormData from "form-data";
-
-import { token, uploadToGhostFilesUrl } from "./config";
-
-async function uploadDataToGhost(filepath: string) {
-    const contentData = fs.createReadStream(filepath);
-    const formData = new FormData();
-
-    formData.append('file', contentData, path.basename(filepath));
-
-    try {
-        const response = await axios.post(uploadToGhostFilesUrl, formData, {
-            headers: {
-                Authorization: `Ghost ${token}`,
-                ...formData.getHeaders(),
-            }
-        });
-
-        return response.data;
-    } catch (error: any) {
-        throw new Error(`Failed to upload image to Ghost: ${error.message}`);
-    }
-}
+import uploadDataToGhost from "./uploadDataToGhost";
 
 async function downloadContent(url: string, filepath: string) {
     try {
@@ -56,7 +34,7 @@ async function getNewLink(slug: string, sourceURL: string) {
         const downloadedData = await downloadContent(sourceURL, dataFilePath);
         const uploadDataResponse = await uploadDataToGhost(dataFilePath)
         fs.unlinkSync(downloadedData)
-        return uploadDataResponse.files[0].url
+        return uploadDataResponse
     } catch (err) {
         return null
     }
