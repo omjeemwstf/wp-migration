@@ -2,6 +2,7 @@ import axios from "axios";
 import path from "path"
 import fs from "fs"
 import uploadDataToGhost from "./uploadDataToGhost";
+import { imagekit } from "../../config";
 
 async function downloadContent(url: string, filepath: string) {
     try {
@@ -32,7 +33,17 @@ async function getNewLink(slug: string, sourceURL: string) {
         }
         const dataFilePath = path.resolve(__dirname, '.', 'data', dataFilename);
         const downloadedData = await downloadContent(sourceURL, dataFilePath);
-        const uploadDataResponse = await uploadDataToGhost(dataFilePath)
+        let uploadDataResponse
+        if (dataFilename.endsWith(".pdf")) {
+            const uploadedPDF = await imagekit.upload({
+                file: fs.readFileSync(dataFilePath), 
+                fileName: dataFilename
+            });
+            uploadDataResponse = uploadedPDF.url
+        }
+        else {
+            uploadDataResponse = await uploadDataToGhost(dataFilePath)
+        }
         fs.unlinkSync(downloadedData)
         return uploadDataResponse
     } catch (err) {

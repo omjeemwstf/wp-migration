@@ -5,14 +5,8 @@ async function changeHostAndProtocol(child: any, target: string, slug: string) {
         let urlString: string = child.url.replace(' ', '');
         const isContains = urlString.includes("wp-content")
         if (isContains) {
-            if (urlString.endsWith(".pdf")) {
-                const newLink = await getNewLink(slug, urlString)
-                child.url = newLink
-            }
-            else{
-                const newLink = await getNewLink(slug, urlString)
-                child.url = newLink
-            }
+            const newLink = await getNewLink(slug, urlString)
+            child.url = newLink
         }
     }
 }

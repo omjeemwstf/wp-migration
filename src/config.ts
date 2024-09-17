@@ -1,5 +1,7 @@
 import ImageKit from "imagekit";
 import jwt from "jsonwebtoken"
+import multer from 'multer';
+
 
 export const ghostURL = 'http://localhost:2368'
 export const wordpressURL_BTCWIRES = "https://www.btcwires.com"
@@ -14,6 +16,8 @@ export const jwt_secret = "om@"
 export const public_Key_ImageKIT = "public_AcesgOoUdxRbJAm5NRJiyJGHSSY="
 export const private_Key_ImageKIT = "private_uXGoLgm+b5VYD4v4SyzLi2u0GrA="
 export const url_Endpoint_ImageKIT = "https://ik.imagekit.io/omjeem"
+export const multerUpload = multer({ storage: multer.memoryStorage() });
+
 
 
 export const token = () => {
