@@ -4,7 +4,7 @@ import extractCategory from "./extractCategory"
 import getNewLink from "./getNewLink"
 import { htmlToLexical } from "@tryghost/kg-html-to-lexical";
 import changeURL from "./changeURL";
-import { ghostURL } from "../../config";
+import { ghostURL } from "../../data/config";
 import generateImageFromAi from "./generateFromAi";
 import decodeToPlainText from "./decodeToPlainText";
 

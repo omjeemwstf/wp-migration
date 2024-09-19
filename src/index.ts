@@ -1,13 +1,14 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import {  User } from "./schema"
 import jwt from "jsonwebtoken"
-import { jwt_secret } from "./config"
-import { middleware } from "./middleware"
+import { jwt_secret } from "./data/config"
 import postDataRouter from "./migration"
 import adRouter from "./ad"
 import authRouter from "./auth"
+import axios from "axios"
+import generateImageFromAi from "./migration/operations/generateFromAi"
+import orgInfoRouter from "./org"
 
 dotenv.config()
 const app = express()
@@ -18,38 +19,34 @@ app.use(express.json({ limit: '1mb' }));
 app.use("/post", postDataRouter)
 app.use("/ad", adRouter)
 app.use("/auth", authRouter)
+app.use("/org", orgInfoRouter)
 
+app.put("/:postId", async (req, res) => {
 
-app.post("/isValid", async (req, res) => {
-    const token = req.headers.authorization || ""
-    try {
-        const decode: any = jwt.verify(token, jwt_secret);
-        return res.json({
-            message: "Valid user"
-        })
-    } catch (err: any) {
-        return res.status(403).json({
-            message: "InValid user"
-        })
-    }
-})
-
-app.post("/create", async (req, res) => {
-    const user = new User({ email: "om@gmail.com", password: "123" })
-    const resposne = await user.save();
+    const postId = req.params.postId;
+    const response = await axios.get(`/${postId}/?key=2ea1717d19a2410c608bf0b5d4`);
+    const data = response.data.posts[0]
+    let { id, title, html, slug, custom_excerpt, updated_at } = data
+    console.log(id)
+    console.log(title)
+    console.log(slug)
+    console.log(custom_excerpt)
+    console.log(updated_at)
+     
     return res.json({
-        resposne
+
     })
 })
-
-
-
 
 app.get("/", (req, res) => {
+    const origin = req.get('origin') || req.get('referer') || 'Unknown';
+    console.log("Request origin:", req.get('origin'));
+
     return res.json({
-        message: "Welcome to ghost custom server..."
-    })
-})
+        message: "Welcome to ghost custom server...",
+        origin: origin
+    });
+});
 
 
 

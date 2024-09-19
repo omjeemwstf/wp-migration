@@ -1,5 +1,5 @@
 import axios from "axios";
-import { btcWiresApiUrl, ghostAPIURL, token } from "../config";
+import { btcWiresApiUrl, ghostAPIURL, token } from "../data/config";
 import createPayLoad from "./operations/createPayLoad";
 
 

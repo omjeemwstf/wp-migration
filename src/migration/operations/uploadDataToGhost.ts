@@ -3,7 +3,7 @@ import fs from "fs"
 import path from "path"
 import axios from "axios"
 
-import { token, uploadToGhostFilesUrl } from "../../config";
+import { token, uploadToGhostFilesUrl } from "../../data/config";
 
 async function uploadDataToGhost(filepath: string) {
     const contentData = fs.createReadStream(filepath);

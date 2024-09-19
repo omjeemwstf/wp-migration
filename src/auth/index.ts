@@ -1,7 +1,8 @@
 import express from "express"
 import jwt from "jsonwebtoken"
-import { AdminUsers, User } from "../schema"
-import { jwt_secret } from "../config"
+import { CustomMiddlewareRequest, jwt_secret } from "../data/config"
+import { Admin_GHOST } from "../data/schema"
+import middleware from "../middlewares/middleware"
 
 const authRouter = express.Router()
 
@@ -14,41 +15,103 @@ authRouter.post("/signin", async (req, res) => {
             message: "Please enter email and password"
         })
     }
-    const isUserExist = await User.findOne({ email, password })
+    const srcName = req.get('origin') || req.get('referer') || 'Unknown';
+
+    const isUserExist = await Admin_GHOST.findOne(
+        {
+            src: srcName,
+            user: {
+                $elemMatch: {
+                    email, password
+                }
+            }
+        },
+        { 'user.$': 1 }
+    )
     if (!isUserExist) {
         return res.status(404).json({
             message: "User is not authentic"
         })
     }
-    const token = jwt.sign({ userId: isUserExist._id }, jwt_secret);
+    const orgId = isUserExist._id
+    const userId = isUserExist.user[0]._id
+
+    const token = jwt.sign({
+        orgId: orgId,
+        userId: userId,
+    }, jwt_secret)
 
     return res.json({
+        message: "User exist",
         token
     })
 })
 
-authRouter.post("/user", async (req, res) => {
-    const body = req.body;
-    try {
-        const name = body.name
-        const role = body.role
-
-        const adminUser = new AdminUsers({ name: name, role: role });
-        const resposne = await adminUser.save();
-        return res.json({
-            adminUser: resposne
+authRouter.post("/signup", async (req, res) => {
+    const body = req.body
+    const email = body.email
+    const password = body.password
+    const srcName = req.get('origin') || req.get('referer') || 'Unknown';
+    if (!email || !password) {
+        return res.status(404).json({
+            message: "Please enter email and password"
         })
-    } catch (Err: any) {
+    }
+    const isUserExist = await Admin_GHOST.findOne(
+        {
+            src: srcName,
+            user: {
+                $elemMatch: {
+                    email: email
+                }
+            }
+        }
+    )
+    if (isUserExist) {
+        return res.status(404).json({
+            message: "Email already in Use"
+        })
+    }
+    try {
+        const createUser = await Admin_GHOST.findOneAndUpdate(
+            { src: srcName },
+            {
+                $push: {
+                    user: { email, password }
+                }
+            },
+            {
+                new: true,
+                fields: { 'user': { $slice: -1 } }
+            }
+        )
+        if (!createUser) {
+            return res.status(404).json({
+                message: "Organization is not registered"
+            })
+        }
+        console.log("create user", createUser)
+        const token = jwt.sign({
+            orgId: createUser?._id,
+            userId: createUser?.user[0]._id
+        }, jwt_secret)
+
+        return res.json({
+            message: "User created",
+            token
+        })
+    } catch (error: any) {
+        console.log("Error while registering user")
         return res.status(400).json({
-            error: Err
+            message: "Error while registering user"
         })
     }
 })
 
-authRouter.get("/user", async (req, res) => {
-    const response = await AdminUsers.find();
+authRouter.get("/", middleware, async (req: CustomMiddlewareRequest, res) => {
     return res.json({
-        response
+        name: req.userName,
+        role: req.userRole
     })
 })
 

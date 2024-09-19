@@ -1,7 +1,7 @@
 import axios from "axios"
 import fs from "fs"
 import path from "path"
-import { generateImageFromAIUrl } from "../../config";
+import { generateImageFromAIUrl } from "../../data/config";
 import uploadDataToGhost from "./uploadDataToGhost";
 
 async function generateImageFromAi(slug: string, title: string, excerpt: string, content: string) {
@@ -31,7 +31,6 @@ async function generateImageFromAi(slug: string, title: string, excerpt: string,
         return imageLink
     } catch (Error: any) {
         console.log("Error while generatingImage from AI", Error.message)
-
     }
 
 }

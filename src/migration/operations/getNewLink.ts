@@ -2,7 +2,7 @@ import axios from "axios";
 import path from "path"
 import fs from "fs"
 import uploadDataToGhost from "./uploadDataToGhost";
-import { imagekit } from "../../config";
+import { imagekit } from "../../data/config";
 
 async function downloadContent(url: string, filepath: string) {
     try {
