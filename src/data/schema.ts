@@ -13,7 +13,7 @@ interface IUser extends Document {
     email: string;
     password: string;
     role: typeof USER_TYPES[keyof typeof USER_TYPES];
-    _id : Types.ObjectId
+    _id: Types.ObjectId
 }
 
 interface IAd extends Document {
@@ -27,9 +27,12 @@ interface IOrganization extends Document {
     user: IUser[];
     ad: IAd[];
     name: String,
-    src : String,
+    src: String,
     contentAPI: String,
-    adminAPI : String
+    adminAPI: String,
+    imageKitPrivate: String,
+    imageKitPublic: String,
+    imageKitUrl: String
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -50,9 +53,12 @@ const organizationSchema = new mongoose.Schema<IOrganization>({
     user: [userSchema],
     ad: [adSchema],
     name: String,
-    src : String,
-    contentAPI : String,
-    adminAPI: String   
+    src: String,
+    contentAPI: String,
+    adminAPI: String,
+    imageKitPrivate: String,
+    imageKitPublic: String,
+    imageKitUrl: String
 });
 
 

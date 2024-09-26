@@ -51,10 +51,11 @@ authRouter.post("/signup", async (req, res) => {
     const body = req.body
     const email = body.email
     const password = body.password
+    const name = body.name
     const srcName = req.get('origin') || req.get('referer') || 'Unknown';
-    if (!email || !password) {
+    if (!email || !password || !name) {
         return res.status(404).json({
-            message: "Please enter email and password"
+            message: "All field are required"
         })
     }
     const isUserExist = await Admin_GHOST.findOne(
@@ -77,7 +78,7 @@ authRouter.post("/signup", async (req, res) => {
             { src: srcName },
             {
                 $push: {
-                    user: { email, password }
+                    user: { email, password, name }
                 }
             },
             {
@@ -90,7 +91,6 @@ authRouter.post("/signup", async (req, res) => {
                 message: "Organization is not registered"
             })
         }
-        console.log("create user", createUser)
         const token = jwt.sign({
             orgId: createUser?._id,
             userId: createUser?.user[0]._id
@@ -111,8 +111,65 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.get("/", middleware, async (req: CustomMiddlewareRequest, res) => {
     return res.json({
         name: req.userName,
-        role: req.userRole
+        role: req.userRole,
+        email: req.email
     })
+})
+
+authRouter.put("/", middleware, async (req: CustomMiddlewareRequest, res) => {
+    const body = req.body
+
+    console.log("body is ", body)
+    try {
+        const name = body.name
+        const email = body.email
+        const password = body.password
+
+        const updateQuery: any = {};
+        const newUserDetails: any = {}
+
+        if (name) {
+            updateQuery['user.$.name'] = name;
+            newUserDetails.name = name;
+        }
+        if (email) {
+            updateQuery['user.$.email'] = email;
+            newUserDetails.email = email;
+        }
+        if (password) {
+            updateQuery['user.$.password'] = password;
+            newUserDetails.password = password
+        }
+
+        console.log("updated query ", updateQuery)
+
+
+        if (Object.keys(updateQuery).length > 0) {
+            const response = await Admin_GHOST.findOneAndUpdate(
+                {
+                    _id: req.orgId,
+                    'user._id': req.userId
+                },
+                {
+                    $set: updateQuery
+                }
+            );
+            return res.json({
+                message: "Profile Updated Successfully..",
+                user: newUserDetails
+            })
+        } else {
+            return res.status(401).json({
+                messaage: "Enter details to update",
+            })
+        }
+    } catch (err) {
+        return res.status(401).json({
+            message: "Error while updating userInfo",
+            error: err
+        })
+    }
+
 })
 
 export default authRouter

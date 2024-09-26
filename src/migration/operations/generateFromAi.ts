@@ -4,13 +4,14 @@ import path from "path"
 import { generateImageFromAIUrl } from "../../data/config";
 import uploadDataToGhost from "./uploadDataToGhost";
 
-async function generateImageFromAi(slug: string, title: string, excerpt: string, content: string) {
-    console.log("Image is generating from AI.....")
+async function generateImageFromAi(slug: string, title: string, excerpt: string, content: string, tag : string) {
+    console.log("Image is generating from AI.....", tag)
     const payLoad = {
         "blog": {
-            title, excerpt, content
+            title, excerpt, content, tag
         }
     }
+    console.log(payLoad)
     try {
         const response = await axios.post(generateImageFromAIUrl, payLoad, {
             headers: {

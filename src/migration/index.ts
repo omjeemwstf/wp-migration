@@ -5,13 +5,14 @@ import updatePostWithFeatureImage from "./operations/postPublished";
 import middleware from "../middlewares/middleware";
 import migrationMiddleware from "../middlewares/migrationMiddleware";
 import axios from "axios";
-import { contentAPIKey, ghostAPIURL, ghostContentApiURL } from "../data/config";
+import { CustomMiddlewareRequest, ghostAPIURL, ghostContentApiURL } from "../data/config";
 import generateImageFromAi from "./operations/generateFromAi";
+import adminMiddleware from "../middlewares/adminMiddleWare";
 
 const postDataRouter = express.Router()
 let isMigrating = false
 
-postDataRouter.use(middleware, migrationMiddleware)
+postDataRouter.use(middleware)
 
 postDataRouter.post("/migration", (req, res) => {
     isMigrating = true;
@@ -36,14 +37,14 @@ postDataRouter.post("/published", (req, res) => {
 })
 
 
-postDataRouter.put("/:postId", async (req, res) => {
+postDataRouter.put("/:postId", async (req: CustomMiddlewareRequest, res) => {
 
     try {
         const postId = req.params.postId;
-        const response = await axios.get(`${ghostContentApiURL}${postId}/?key=${contentAPIKey}`);
+        const response = await axios.get(`${ghostContentApiURL}${postId}/?key=${req.contentAPI}`);
         let { id, title, html, slug, custom_excerpt, updated_at } = response.data.posts[0]
 
-        const newImgUrl = await generateImageFromAi(slug, title, custom_excerpt, html)
+        const newImgUrl = await generateImageFromAi(slug, title, custom_excerpt, html, "Animated")
 
         return res.json({
             newImageUrl: newImgUrl
@@ -54,6 +55,24 @@ postDataRouter.put("/:postId", async (req, res) => {
         })
     }
 
+})
+
+postDataRouter.get("/", async (req: CustomMiddlewareRequest, res) => {
+    const pageNo = req.query.page || 1
+    try {
+        const baseUrlAPI = req.src;
+        const allPostAPI = baseUrlAPI + `/ghost/api/content/posts/?key=${req.contentAPI}&fields=title,url,feature_image,id&page=${pageNo}`;
+        const response = await axios.get(allPostAPI)
+        const posts = response.data.posts
+        return res.json({
+            posts
+        })
+    } catch (err) {
+        return res.status(404).json({
+            message: "Error while getting posts",
+            err
+        })
+    }
 })
 
 export default postDataRouter

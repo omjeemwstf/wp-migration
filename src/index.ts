@@ -9,6 +9,7 @@ import authRouter from "./auth"
 import axios from "axios"
 import generateImageFromAi from "./migration/operations/generateFromAi"
 import orgInfoRouter from "./org"
+import userDetailsRouter from "./usersDetail"
 
 dotenv.config()
 const app = express()
@@ -20,6 +21,7 @@ app.use("/post", postDataRouter)
 app.use("/ad", adRouter)
 app.use("/auth", authRouter)
 app.use("/org", orgInfoRouter)
+app.use("/user", userDetailsRouter)
 
 app.put("/:postId", async (req, res) => {
 

@@ -27,7 +27,7 @@ async function createPayLoad(data: any) {
     } catch (err: any) {
         const title = decodeContent(data.title.rendered) || ""
         const content = decodeToPlainText(htmlString) || ""
-        newImgUrl = await generateImageFromAi(imageSlug, title, excerpt, content)
+        newImgUrl = await generateImageFromAi(imageSlug, title, excerpt, content, "Animated")
     }
 
     const lexicalDataObject = await htmlToLexical(htmlString);

@@ -8,9 +8,8 @@ import adMiddleware from "../middlewares/adMiddleware";
 const adRouter = express.Router()
 const upload = multer({ storage: multer.memoryStorage() });
 
-adRouter.use(middleware, adMiddleware)
 
-adRouter.post("/upload", upload.single('ad-image'), async (req: CustomMiddlewareRequest, res) => {
+adRouter.post("/upload", middleware, adMiddleware, upload.single('ad-image'), async (req: CustomMiddlewareRequest, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -40,18 +39,20 @@ adRouter.post("/upload", upload.single('ad-image'), async (req: CustomMiddleware
                 }
             },
             {
-                new: true,
-                projection: { 'ad': { $slice: -1 } }
+                new: true
             }
         );
-        const data = response?.ad[0]
-        return res.json({ data });
+        const ad = response?.ad
+        return res.json({
+            message: "Ad Uploaded Successfully..",
+            ad
+        });
     } catch (error: any) {
         return res.status(500).json({ error: error.message });
     }
 })
 
-adRouter.get("/", async (req: CustomMiddlewareRequest, res) => {
+adRouter.get("/", middleware, async (req: CustomMiddlewareRequest, res) => {
     try {
         const orgId = req.orgId
         const response = await Admin_GHOST.findOne({ _id: orgId })
@@ -83,7 +84,7 @@ adRouter.get("/:type", async (req: CustomMiddlewareRequest, res) => {
     }
 })
 
-adRouter.delete("/:id", async (req: CustomMiddlewareRequest, res) => {
+adRouter.delete("/:id", middleware, adMiddleware, async (req: CustomMiddlewareRequest, res) => {
     const adID = req.params.id
     try {
         const response = await Admin_GHOST.findOneAndUpdate({
@@ -101,8 +102,10 @@ adRouter.delete("/:id", async (req: CustomMiddlewareRequest, res) => {
                 fields: { 'user': 0 }
             }
         )
+        const ad = response?.ad
         return res.json({
-            message: "Ad deleted successfully!"
+            message: "Ad deleted successfully!",
+            ad
         })
     } catch (err) {
         console.log("Error while deleting the ads", err)

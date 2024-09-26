@@ -8,7 +8,7 @@ import { Request } from "express";
 export const ghostURL = 'http://localhost:2368'
 export const wordpressURL_BTCWIRES = "https://www.btcwires.com"
 export const wordpressURL_Legal_WIRES = "https://www.legal-wires.com"
-export const generateImageFromAIUrl = 'https://02dd-2401-4900-8842-6ede-a9dc-87a3-b96-c568.ngrok-free.app/TextToImage';
+export const generateImageFromAIUrl = 'https://004d-2401-4900-8841-39d3-a598-af2d-df58-419d.ngrok-free.app/TextToImage';
 export const contentAPIKey = "2ea1717d19a2410c608bf0b5d4"
 export const key = "66dadcc1dced8f3ca417823a:20152ace7f4dd9587852ec11d84379929a29f8743a74eefa7b01f65b0075bd03";
 export const ghostAPIURL = `${ghostURL}/ghost/api/admin/posts/`;
@@ -52,10 +52,18 @@ export const imagekit = new ImageKit({
 });
 
 export interface CustomMiddlewareRequest extends Request {
-    userId?: string;
-    orgId?: string;
-    userRole?: string;
-    userName? : string;
+    userId?: String;
+    orgId?: String;
+    userRole?: String;
+    userName?: String;
+    email?: String;
+    src?: String;
+    contentAPI?: String;
+    adminAPI?: String;
+    imageKitPublic?: String;
+    imageKitPrivate?: String;
+    imageKitUrl?: String;
+
 }
 
 

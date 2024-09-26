@@ -27,17 +27,27 @@ async function middleware(req: CustomMiddlewareRequest, res: Response, next: Fun
                 'user.$': 1
             }
         );
-        const userName = userData?.user[0].name
-        const userRole = userData?.user[0].role
         if (!userData) {
             return res.status(403).json({
                 message: "User not found"
             });
         }
+        const userName = userData?.user[0].name
+        const userRole = userData?.user[0].role
+        const email = userData?.user[0].email
+
+        let { src, contentAPI, adminAPI, imageKitPublic, imageKitPrivate, imageKitUrl } = userData
         req.userId = userId;
         req.orgId = orgId;
-        req.userRole = userRole,
-        req.userName = userName
+        req.userRole = userRole;
+        req.userName = userName;
+        req.email = email
+        req.src = src
+        req.contentAPI = contentAPI
+        req.adminAPI = adminAPI
+        req.imageKitPublic = imageKitPublic
+        req.imageKitPrivate = imageKitPrivate
+        req.imageKitUrl = imageKitUrl
         next();
     } catch (err) {
         return res.status(403).json({

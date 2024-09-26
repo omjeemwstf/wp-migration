@@ -3,7 +3,7 @@ import { ghostAPIURL, token } from "../../data/config";
 import generateImageFromAi from "./generateFromAi";
 
 async function updatePostWithFeatureImage(id: string, slug: string, title: string, custom_excerpt: string, html: string, updated_at: string) {
-    const newImgUrl = await generateImageFromAi(slug, title, custom_excerpt, html)
+    const newImgUrl = await generateImageFromAi(slug, title, custom_excerpt, html, "Animated")
     const payload = {
         feature_image: newImgUrl,
         updated_at: updated_at
